@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:study_app/screens/global/main_screen.dart';
+import 'package:study_app/screens/global/auth_screens.dart';
 import 'package:study_app/theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const MainScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => const AuthEntryScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
