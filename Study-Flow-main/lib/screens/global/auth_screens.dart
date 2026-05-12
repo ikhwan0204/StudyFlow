@@ -8,7 +8,7 @@ class AuthEntryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 480),
@@ -30,7 +30,7 @@ class AuthEntryScreen extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.school_rounded,
-                          color: Colors.white,
+                          color: Colors.black,
                           size: 72,
                         ),
                         const SizedBox(height: 24),
@@ -38,7 +38,7 @@ class AuthEntryScreen extends StatelessWidget {
                           'Welcome to Study Flow',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -48,7 +48,7 @@ class AuthEntryScreen extends StatelessWidget {
                           'Discover attractive login, signup and forgot password screens with a premium dark style.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.white70,
+                                color: Colors.black54,
                                 height: 1.5,
                               ),
                         ),
@@ -105,11 +105,11 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -123,7 +123,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   Text(
                     'Surya',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 42,
                           fontWeight: FontWeight.w700,
                         ),
@@ -149,7 +149,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       },
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.white70,
+                        color: Colors.black45,
                       ),
                     ),
                   ),
@@ -181,11 +181,11 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Text.rich(
                       TextSpan(
                         text: 'Don\'t have an account? ',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                         children: [
                           TextSpan(
                             text: 'Sign Up',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Navigator.push(
@@ -200,7 +200,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Center(child: Text('or', style: TextStyle(color: Colors.white54))),
+                  const Center(child: Text('or', style: TextStyle(color: Colors.black54))),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -250,11 +250,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -268,7 +268,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Text(
                     'Surya',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 42,
                           fontWeight: FontWeight.w700,
                         ),
@@ -314,7 +314,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.white70,
+                        color: Colors.black45,
                       ),
                     ),
                   ),
@@ -332,7 +332,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                       icon: Icon(
                         _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.white70,
+                        color: Colors.black45,
                       ),
                     ),
                   ),
@@ -351,11 +351,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Text.rich(
                       TextSpan(
                         text: 'Already have an account? ',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white70),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                         children: [
                           TextSpan(
                             text: 'Sign In',
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 Navigator.pop(context);
@@ -367,7 +367,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Center(child: Text('or', style: TextStyle(color: Colors.white54))),
+                  const Center(child: Text('or', style: TextStyle(color: Colors.black54))),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -407,11 +407,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -425,7 +425,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   Text(
                     'Surya',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 42,
                           fontWeight: FontWeight.w700,
                         ),
@@ -435,7 +435,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     padding: EdgeInsets.only(bottom: 16),
                     child: Text(
                       'Enter your email to receive a password reset link.',
-                      style: TextStyle(color: Colors.white70, height: 1.5),
+                      style: TextStyle(color: Colors.black54, height: 1.5),
                     ),
                   ),
                   _AuthInputField(
@@ -486,14 +486,14 @@ class _AuthInputField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white54),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        hintStyle: const TextStyle(color: Colors.black45),
+        prefixIcon: Icon(icon, color: Colors.black45),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.08),
+        fillColor: Colors.black.withOpacity(0.05),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -520,17 +520,17 @@ class _AuthActionButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: isSecondary ? Colors.white.withOpacity(0.08) : Colors.white,
-        foregroundColor: isSecondary ? Colors.white : Colors.black,
+        foregroundColor: Colors.black,
         padding: const EdgeInsets.symmetric(vertical: 18),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       onPressed: onPressed,
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: isSecondary ? Colors.white : Colors.black,
+          color: Colors.black,
         ),
       ),
     );
@@ -553,7 +553,7 @@ class _SocialIconButton extends StatelessWidget {
           color: Colors.white.withOpacity(0.08),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(icon, color: Colors.white, size: 22),
+        child: Icon(icon, color: Colors.black, size: 22),
       ),
     );
   }
