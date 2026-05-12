@@ -7,7 +7,6 @@ import 'package:study_app/providers/chapter_provider.dart';
 import 'package:study_app/providers/academic_provider.dart';
 import 'package:study_app/models/subject.dart';
 import 'package:study_app/models/chapter.dart';
-import 'package:study_app/models/academic/subject_attendance.dart';
 
 class NotificationSheet extends StatelessWidget {
   final ScrollController scrollController;

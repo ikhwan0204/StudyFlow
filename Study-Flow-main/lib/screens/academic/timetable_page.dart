@@ -102,14 +102,14 @@ class TimetablePage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<String>(
-                      value: selectedSubjectId,
+                      initialValue: selectedSubjectId,
                       decoration: const InputDecoration(labelText: 'Subject'),
                       items: subjects.map((s) => DropdownMenuItem(value: s.id, child: Text(s.subjectName))).toList(),
                       onChanged: (v) => setDialogState(() => selectedSubjectId = v),
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<int>(
-                      value: selectedDay,
+                      initialValue: selectedDay,
                       decoration: const InputDecoration(labelText: 'Day'),
                       items: List.generate(7, (i) => DropdownMenuItem(value: i + 1, child: Text(_dayNames[i]))),
                       onChanged: (v) => setDialogState(() => selectedDay = v!),

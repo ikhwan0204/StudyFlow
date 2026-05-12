@@ -1,0 +1,33 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"flutter/ephemeral/.plugin_symlinks/pdfium_flutter/windows/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "ALL_BUILD::@7ed12646c7c9a1d4f6db",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "plugins/pdfium_flutter",
+		"source" : "flutter/ephemeral/.plugin_symlinks/pdfium_flutter/windows"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

@@ -1,0 +1,48 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "share_plus_plugin::@1b881e75852d57e06a99"
+		},
+		{
+			"id" : "flutter_wrapper_plugin::@2bb09fbb03a373b2cb34"
+		},
+		{
+			"id" : "flutter_wrapper_app::@2bb09fbb03a373b2cb34"
+		},
+		{
+			"id" : "study_app::@056c4f61b0156d1d9b06"
+		},
+		{
+			"id" : "url_launcher_windows_plugin::@82e8e937a0da8e6132e4"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "ALL_BUILD::@6890427a1f51a3e7e1df",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

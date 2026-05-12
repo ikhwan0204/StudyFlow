@@ -7,7 +7,6 @@ import 'package:study_app/providers/subject_provider.dart';
 import 'package:study_app/providers/chapter_provider.dart';
 import 'package:study_app/providers/study_provider.dart';
 import 'package:study_app/providers/note_provider.dart';
-import 'package:study_app/providers/todo_provider.dart';
 import 'package:study_app/models/subject.dart';
 import 'package:study_app/screens/global/search_screen.dart';
 import 'package:study_app/widgets/notification_sheet.dart';

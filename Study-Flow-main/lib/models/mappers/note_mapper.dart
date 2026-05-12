@@ -1,5 +1,4 @@
 import 'package:study_app/models/note.dart';
-import 'package:study_app/models/block.dart';
 import 'package:study_app/models/mappers/block_mapper.dart';
 
 extension NoteMapper on Note {
