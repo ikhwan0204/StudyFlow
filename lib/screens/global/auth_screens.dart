@@ -121,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Surya',
+                    'Welcome Back!',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                           color: Colors.black,
                           fontSize: 42,
@@ -266,7 +266,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Surya',
+                    'Welcome Back!',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                           color: Colors.black,
                           fontSize: 42,
@@ -423,7 +423,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Surya',
+                    'Welcome Back!',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                           color: Colors.black,
                           fontSize: 42,
