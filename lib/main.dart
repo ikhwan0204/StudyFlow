@@ -13,10 +13,12 @@ import 'package:study_app/providers/flashcard_provider.dart';
 import 'package:study_app/providers/mind_map_provider.dart';
 import 'package:study_app/providers/drawing_provider.dart';
 import 'package:study_app/providers/academic_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveService.init();
+  await Firebase.initializeApp();
 
   runApp(
     MultiProvider(

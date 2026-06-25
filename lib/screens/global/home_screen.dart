@@ -11,9 +11,17 @@ import 'package:study_app/models/subject.dart';
 import 'package:study_app/screens/subject/dialogs/add_subject_dialog.dart';
 import 'package:study_app/screens/global/search_screen.dart';
 import 'package:study_app/widgets/notification_sheet.dart';
+import 'package:study_app/services/classroom_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool _showOnlyWithDueDate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +29,22 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('My Subjects'),
         actions: [
+          IconButton(
+            icon: Icon(
+              _showOnlyWithDueDate
+                  ? Icons.filter_alt_rounded
+                  : Icons.filter_alt_outlined,
+            ),
+            tooltip: 'Tunjuk yang ada due date je',
+            onPressed: () {
+              setState(() => _showOnlyWithDueDate = !_showOnlyWithDueDate);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.sync_rounded),
+            tooltip: 'Sync from Google Classroom',
+            onPressed: () => _syncFromClassroom(context),
+          ),
           IconButton(
             icon: const Icon(Icons.search_rounded),
             onPressed: () {
@@ -38,10 +62,17 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<SubjectProvider>(
         builder: (context, subjectProvider, child) {
-          final subjects = subjectProvider.subjects;
+          final allSubjects = subjectProvider.subjects;
+          final subjects = _showOnlyWithDueDate
+              ? allSubjects.where((s) => s.dueDate != null).toList()
+              : allSubjects;
+
+          if (allSubjects.isEmpty) {
+            return const Center(child: Text("No subjects yet. Add one!"));
+          }
 
           if (subjects.isEmpty) {
-            return const Center(child: Text("No subjects yet. Add one!"));
+            return const Center(child: Text("Tiada subject dengan due date."));
           }
 
           return ListView.separated(
@@ -116,11 +147,15 @@ class HomeScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    subject.name,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.displaySmall?.copyWith(color: Colors.white),
+                  Expanded(
+                    child: Text(
+                      subject.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.displaySmall?.copyWith(color: Colors.white),
+                    ),
                   ),
                   Row(
                     children: [
@@ -149,14 +184,15 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              Row(
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
                 children: [
                   _buildStatChip(
                     context,
                     Icons.menu_book_rounded,
                     '$chaptersCount Chapters',
                   ),
-                  const SizedBox(width: 12),
                   // Will connect StudyTime later dynamically
                   Consumer<StudyProvider>(
                     builder: (context, studyProvider, child) {
@@ -173,6 +209,12 @@ class HomeScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  if (subject.dueDate != null)
+                    _buildStatChip(
+                      context,
+                      Icons.event_rounded,
+                      'Due ${_formatDueDate(subject.dueDate!, subject.dueTime)}',
+                    ),
                 ],
               ),
             ],
@@ -204,6 +246,29 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDueDate(DateTime date, TimeOfDay? time) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final dateStr = '${date.day} ${months[date.month - 1]}';
+    if (time == null) return dateStr;
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return '$dateStr, $hour:$minute $period';
   }
 
   // color option helper removed (unused after dialog integration)
@@ -283,5 +348,113 @@ class HomeScreen extends StatelessWidget {
 
   void _showNotifications(BuildContext context) {
     NotificationSheet.show(context);
+  }
+
+  Future<void> _syncFromClassroom(BuildContext context) async {
+    if (!ClassroomService.isAvailable) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in with Google to use Classroom sync'),
+        ),
+      );
+      return;
+    }
+
+    // Tanya user nak sync dari bila
+    final cutoff = await showDialog<DateTime?>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: const Text('Since when does the assignment sync?'),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(
+              ctx,
+              DateTime(DateTime.now().year, DateTime.now().month, 1),
+            ),
+            child: const Text('This month only'),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(
+              ctx,
+              DateTime.now().subtract(const Duration(days: 90)),
+            ),
+            child: const Text('Last 3 months'),
+          ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(ctx, null),
+            child: const Text('All (no filter)'),
+          ),
+        ],
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final assignments = await ClassroomService.fetchAllAssignments(
+        since: cutoff,
+      );
+      final subjectProvider = Provider.of<SubjectProvider>(
+        context,
+        listen: false,
+      );
+      final existingIds = subjectProvider.subjects.map((s) => s.id).toSet();
+
+      int added = 0;
+      for (final a in assignments) {
+        final id = '${a.courseId}_${a.courseWorkId}';
+        if (existingIds.contains(id)) continue; // skip kalau dah pernah disync
+
+        DateTime? dueDateOnly;
+        TimeOfDay? dueTimeOnly;
+        if (a.dueDate != null) {
+          dueDateOnly = DateTime(
+            a.dueDate!.year,
+            a.dueDate!.month,
+            a.dueDate!.day,
+          );
+          dueTimeOnly = TimeOfDay(
+            hour: a.dueDate!.hour,
+            minute: a.dueDate!.minute,
+          );
+        }
+
+        final subject = Subject(
+          id: id,
+          name: '${a.courseTitle} - ${a.title}',
+          colorValue: 0xFF6C63FF, // default ungu — boleh tukar nanti kat UI
+          dueDate: dueDateOnly,
+          dueTime: dueTimeOnly,
+          notes: a.description ?? '',
+        );
+
+        subjectProvider.addSubjectModel(subject);
+        added++;
+      }
+
+      if (context.mounted) {
+        Navigator.pop(context); // tutup loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '$added assignment baru disync (${assignments.length - added} dah ada sebelum ni)',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Sync failed $e')));
+      }
+    }
   }
 }

@@ -15,6 +15,8 @@ import 'package:study_app/providers/academic_provider.dart';
 import 'package:study_app/providers/study_provider.dart';
 import 'package:study_app/providers/mind_map_provider.dart';
 import 'package:study_app/providers/drawing_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:study_app/screens/global/auth_screens.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,12 +26,43 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  bool _isDarkMode = false; // In a real app, this would be read from a provider
+  bool _isDarkMode = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _isDarkMode = Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Future<void> _signOut() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Sign Out', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await FirebaseAuth.instance.signOut();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const AuthEntryScreen()),
+        (route) => false,
+      );
+    }
   }
 
   @override
@@ -43,9 +76,9 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(
             icon: const Icon(Icons.settings_rounded),
             onPressed: () async {
-               await Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
-               if (!mounted) return;
-               setState(() {}); // Refresh name changes
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsPage()));
+              if (!mounted) return;
+              setState(() {});
             },
           ),
         ],
@@ -88,6 +121,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
                   onTap: () => NotificationSheet.show(context),
                 ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.logout_rounded, color: Colors.red),
+                  title: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+                  onTap: _signOut,
+                ),
               ],
             ),
           ),
@@ -102,14 +141,29 @@ class _ProfilePageState extends State<ProfilePage> {
     final hours = last7DaysMinutes ~/ 60;
     final mins = last7DaysMinutes % 60;
 
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName?.isNotEmpty == true
+        ? user!.displayName!
+        : HiveService.settingsBox.get('student_name', defaultValue: 'Student User');
+    final email = user?.email ?? '';
+
     return CustomCard(
       gradient: AppTheme.primaryGradient,
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 40,
             backgroundColor: Colors.white,
-            child: Icon(Icons.person, size: 40, color: AppTheme.primaryColor),
+            child: user?.photoURL != null
+                ? ClipOval(
+                    child: Image.network(
+                      user!.photoURL!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : const Icon(Icons.person, size: 40, color: AppTheme.primaryColor),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -118,11 +172,14 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      HiveService.settingsBox.get('student_name', defaultValue: 'Student User'),
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: Colors.white,
-                          ),
+                    Expanded(
+                      child: Text(
+                        displayName,
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              color: Colors.white,
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white70, size: 20),
@@ -132,6 +189,16 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ],
                 ),
+                if (email.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    email,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withOpacity(0.75),
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   'Study Time (Last 7d): ${hours}h ${mins}m',
@@ -141,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -209,25 +276,28 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.pop(ctx);
               final result = await DataImportService.importFromJsonString(jsonString, clearFirst: true);
               if (mounted) {
-                 Provider.of<SubjectProvider>(context, listen: false).refresh();
-                 Provider.of<ChapterProvider>(context, listen: false).refresh();
-                 Provider.of<StudyProvider>(context, listen: false).refresh();
-                 Provider.of<MindMapProvider>(context, listen: false).refresh();
-                 Provider.of<DrawingProvider>(context, listen: false).refresh();
-                 Provider.of<AcademicProvider>(context, listen: false).refresh();
-                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.message)));
-                 setState(() {}); // Refresh header
+                Provider.of<SubjectProvider>(context, listen: false).refresh();
+                Provider.of<ChapterProvider>(context, listen: false).refresh();
+                Provider.of<StudyProvider>(context, listen: false).refresh();
+                Provider.of<MindMapProvider>(context, listen: false).refresh();
+                Provider.of<DrawingProvider>(context, listen: false).refresh();
+                Provider.of<AcademicProvider>(context, listen: false).refresh();
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result.message)));
+                setState(() {});
               }
             },
             child: const Text('Import', style: TextStyle(color: Colors.white)),
           ),
         ],
-      )
+      ),
     );
   }
 
   void _showEditNameDialog(BuildContext context) {
-    final controller = TextEditingController(text: HiveService.settingsBox.get('student_name', defaultValue: 'Student User'));
+    final controller = TextEditingController(
+      text: FirebaseAuth.instance.currentUser?.displayName ??
+          HiveService.settingsBox.get('student_name', defaultValue: 'Student User'),
+    );
     showDialog(
       context: context,
       builder: (context) {
@@ -244,10 +314,13 @@ class _ProfilePageState extends State<ProfilePage> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (controller.text.isNotEmpty) {
+                  // Update both Firebase dan Hive
+                  await FirebaseAuth.instance.currentUser?.updateDisplayName(controller.text);
                   HiveService.settingsBox.put('student_name', controller.text);
-                  setState(() {}); // Rebuild header
+                  if (!mounted) return;
+                  setState(() {});
                   Navigator.pop(context);
                 }
               },
